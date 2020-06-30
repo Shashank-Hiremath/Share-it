@@ -30,15 +30,14 @@ class Network(object):
 
         nm = nmap.PortScanner()
         nm.scan(hosts=network, arguments='-sn')
-        hosts_list = [(x, nm[x]['status']['state']) for x in nm.all_hosts()]
+        # hosts_list = [(x, nm[x]['status']['state']) for x in nm.all_hosts()]
+        hosts_list = [(x, nm[x].hostname()) for x in nm.all_hosts()]
         neighbours = []
-        for host, status in hosts_list:
+        for host, name in hosts_list:
             if host != self.ip:
-                # print("Host\t{}".format(host))
-                # print(host, len(host))
-                neighbours.append(host)
-        return self.ip, neighbours
+                neighbours.append((host, name))
+        return (self.ip, nm[self.ip].hostname()), neighbours
 
 if __name__ == "__main__":
     D = Network()
-    D.networkscanner()
+    print(D.networkscanner())
