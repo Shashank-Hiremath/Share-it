@@ -1,11 +1,20 @@
-#!/usr/bin/python           # This is client.py file
+#!/usr/bin/python
 
-import socket               # Import socket module
+import socket
+from findIP import Network
 
-s = socket.socket()         # Create a socket object
-host = socket.gethostname() # Get local machine name
-port = 12345                # Reserve a port for your service.
+ip, neighbours = Network().networkscanner()
+port = 12347
 
-s.connect((host, port))
-print s.recv(1024)
-s.close()                     # Close the socket when done
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((ip, port))
+
+file_path = 'README.md'
+f = open(file_path, "rb")
+chunk = f.read(1024)
+while chunk:
+   s.send(chunk)
+   chunk = f.read(1024)
+
+f.close()
+s.close()

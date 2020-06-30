@@ -1,15 +1,23 @@
-#!/usr/bin/python           # This is server.py file
+#!/usr/bin/python
 
-import socket               # Import socket module
+import socket
+from findIP import Network
 
-s = socket.socket()         # Create a socket object
-host = socket.gethostname() # Get local machine name
-port = 12345                # Reserve a port for your service.
-s.bind((host, port))        # Bind to the port
+ip, neighbours = Network().networkscanner()
+port = 12347
 
-s.listen(5)                 # Now wait for client connection.
-while True:
-   c, addr = s.accept()     # Establish connection with client.
-   print 'Got connection from', addr
-   c.send('Thank you for connecting')
-   c.close()                # Close the connection
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind((ip, port))
+s.listen(10)
+c, addr = s.accept()
+print('{} connected'.format(addr))
+
+file_path = 'README4.md'
+f = open(file_path, "wb")
+chunk = c.recv(1024)
+while chunk:
+    f.write(chunk)
+    chunk = c.recv(1024)
+
+c.close()
+s.close()
